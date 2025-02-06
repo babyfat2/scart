@@ -1,0 +1,27 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const getNewProduct_1 = require("../controller/service/getNewProduct");
+const getAllBlog_1 = require("../controller/service/getAllBlog");
+const addContactUs_1 = require("../controller/service/addContactUs");
+const getSingleProduct_1 = require("../controller/service/getSingleProduct");
+const getProductShop_1 = require("../controller/service/getProductShop");
+const getProductSpecial_1 = require("../controller/service/getProductSpecial");
+const getProductCategory_1 = require("../controller/service/getProductCategory");
+const getProductCategoryValidation_1 = require("../../middleware/service/getProductCategoryValidation");
+const handleErrors_1 = require("../../middleware/handleErrors");
+const getNewProductValidation_1 = require("../../middleware/service/getNewProductValidation");
+const getSingleProductValidation_1 = require("../../middleware/service/getSingleProductValidation");
+const addContactusValidation_1 = require("../../middleware/service/addContactusValidation");
+const router = (0, express_1.Router)();
+router.get("/", (req, res) => {
+    res.send("Router service is running");
+});
+router.get("/getNewProduct", getNewProductValidation_1.getNewProductValidation, handleErrors_1.handleErrors, getNewProduct_1.getNewProduct);
+router.get("/getAllBlog", getAllBlog_1.getAllBlog);
+router.post("/addContactUs", addContactusValidation_1.addContactusValidation, handleErrors_1.handleErrors, addContactUs_1.addContactUs);
+router.get("/getSingleProduct", getSingleProductValidation_1.getSingleProductValidation, handleErrors_1.handleErrors, getSingleProduct_1.getSingleProduct);
+router.get("/getProductShop", getProductShop_1.getProductShop);
+router.get("/getProductSpecial", getProductSpecial_1.getProductSpecial);
+router.get("/getProductCategory", getProductCategoryValidation_1.getProductCategoryValidation, handleErrors_1.handleErrors, getProductCategory_1.getProductCategory);
+exports.default = router;

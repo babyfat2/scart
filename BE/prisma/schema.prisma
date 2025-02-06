@@ -1,0 +1,197 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model blog {
+  id       Int       @id
+  name     String?   @db.VarChar(256)
+  content  String?   @db.VarChar(256)
+  createAt DateTime? @db.DateTime(0)
+  imageUri String?   @db.VarChar(256)
+}
+
+model category {
+  id       Int     @id
+  address  String? @db.VarChar(256)
+  imageUri String? @db.VarChar(256)
+  name     String? @db.VarChar(256)
+}
+
+model checkout {
+  id         Int  @id @default(autoincrement())
+  user_id    Int
+  user       users @relation(fields: [user_id], references: [id], onUpdate: Restrict )
+  firstName String?  @db.VarChar(256)
+  lastName  String?  @db.VarChar(256)
+  phone     String?  @db.VarChar(256)
+  email     String?  @db.VarChar(256)
+  address1  String?  @db.VarChar(256)
+  address2  String?  @db.VarChar(256)
+  country   String?  @db.VarChar(256)
+  shipping  String
+  payment   String
+  coupon_id Int?      
+  coupon    coupon?  @relation(fields: [coupon_id], references: [id])
+  createAt        DateTime  @default(now()) 
+orderStatus     String
+
+  product_checkout product_checkout[]
+}
+
+model product_checkout {
+  id            Int @id @default(autoincrement())
+  amount        Int  
+  product_id    Int
+  product       product @relation(fields: [product_id], references: [id], onUpdate: Restrict, map: "FK_Product_Checkout")
+  checkout_id   Int
+  checkout      checkout @relation(fields: [checkout_id], references: [id], onUpdate: Restrict, map: "FK_Checkout_Product")
+
+  @@index([product_id], map: "FK_Product_Checkout")
+  @@index([checkout_id], map: "FK_Checkout_Product")
+}
+
+model contact {
+  id      Int     @id @default(autoincrement())
+  name    String? @db.VarChar(256)
+  email   String? @db.VarChar(256)
+  phone   String? @db.VarChar(256)
+  subject String? @db.VarChar(256)
+  content String? @db.VarChar(256)
+}
+
+model coupon {
+  id   Int  @id @default(autoincrement())
+  code Int?
+  discount String?
+  checkout checkout[]
+}
+
+model product {
+  id          Int     @id @default(autoincrement())
+  name        String @db.VarChar(256)
+  sku         String  @db.VarChar(256)
+  price       Int
+  stock       String @db.VarChar(256)
+  status      String? @db.VarChar(256)
+  category    String @db.VarChar(256)
+  brand       String @db.VarChar(256)
+  imageUri    String @db.VarChar(256)
+  description String @db.VarChar(256)
+  createAt    DateTime @db.DateTime(0)
+  color       color[]
+  size        size[]
+  review      review[]
+  group       group[]
+  sale        sale[]
+  compare     compare[]
+  wishlist    wishlist[]
+  cart        cart[]
+  product_checkout product_checkout[]
+}
+
+model review {
+  id         Int       @id @default(autoincrement())
+  content    String   @db.VarChar(256)
+  name       String   @db.VarChar(256)
+  rate       Int
+  createAt   DateTime @default(now()) 
+  product_id Int
+  product    product @relation(fields: [product_id], references: [id], onUpdate: Restrict, map: "FK_ProductReview")
+
+  @@index([product_id], map: "FK_ProductReview")
+}
+
+model size {
+  id         Int     @id @default(autoincrement())
+  name       String  @db.VarChar(256)
+  price      String  @db.VarChar(256)
+  product_id Int
+  product    product @relation(fields: [product_id], references: [id], onUpdate: Restrict, map: "FK_ProductSize")
+
+  @@index([product_id], map: "FK_ProductSize")
+}
+
+model color {
+  id        Int      @id @default(autoincrement())
+  color     String   @db.VarChar(256)
+  price     String   @db.VarChar(256)
+  product_id Int
+  product   product @relation(fields: [product_id], references: [id], onUpdate: Restrict, map: "FK_ProductColor")
+
+  @@index([product_id], map: "FK_ProductColor")
+}
+
+model group {
+  id          Int      @id @default(autoincrement())
+  imageUri    String   @db.VarChar(256)
+  product_id  Int
+  product     product @relation(fields: [product_id], references: [id], onUpdate: Restrict, map: "FK_ProductGroup")
+
+  @@index([product_id], map: "FK_ProductGroup")
+}
+
+model sale {
+  id        Int      @id @default(autoincrement())
+  price     Int   
+  startAt   DateTime   @db.DateTime(0)
+  endAt     DateTime    @db.DateTime(0)
+  product_id Int
+  product   product @relation(fields: [product_id], references: [id], onUpdate: Restrict, map: "FK_ProductSale")
+
+  @@index([product_id], map: "FK_ProductSale")
+}
+
+model users {
+  id        Int     @id @default(autoincrement())
+  email     String  @db.VarChar(256) @unique
+  password  String  @db.VarChar(256)
+  firstName String?  @db.VarChar(256)
+  lastName  String?  @db.VarChar(256)
+  phone     String?  @db.VarChar(256)
+  address1  String?  @db.VarChar(256)
+  address2  String?  @db.VarChar(256)
+  country   String?  @db.VarChar(256)
+  wishlist  wishlist[]
+  compare   compare[]
+  cart      cart[]
+  checkout  checkout[]
+}
+
+model wishlist {
+  id         Int  @id @default(autoincrement())
+  product_id Int    
+  product    product @relation(fields: [product_id], references: [id], onUpdate: Restrict, map: "FK_ProductWishlist")
+  user_id    Int    
+  user       users @relation(fields: [user_id], references: [id], onUpdate: Restrict, map: "FK_UserWishlist")
+
+  @@index([product_id], map: "FK_ProductWishlist")
+  @@index([user_id], map: "FK_UserWishlist")
+}
+
+model compare {
+  id         Int  @id @default(autoincrement())
+  product_id Int  
+  product    product @relation(fields: [product_id], references: [id], onUpdate: Restrict, map: "FK_ProductCompare")
+  user_id    Int  
+  user       users @relation(fields: [user_id], references: [id], onUpdate: Restrict, map: "FK_UserCompare")
+
+  @@index([product_id], map: "FK_ProductCompare")
+  @@index([user_id], map: "FK_UserCompare")
+}
+
+model cart {
+  id         Int @id @default(autoincrement())
+  amount     Int
+  product_id Int  
+  product    product @relation(fields: [product_id], references: [id], onUpdate: Restrict, map: "FK_ProductCart")
+  user_id    Int   
+  user       users @relation(fields: [user_id], references: [id], onUpdate: Restrict, map: "FK_UserCart")
+
+  @@index([product_id], map: "FK_ProductCart")
+  @@index([user_id], map: "FK_UserCart")
+}

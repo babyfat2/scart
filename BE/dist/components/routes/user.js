@@ -1,0 +1,22 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const changePassword_1 = require("../controller/user/changePassword");
+const changeInformation_1 = require("../controller/user/changeInformation");
+const getInforUser_1 = require("../controller/user/getInforUser");
+const changeInformationValidation_1 = require("../../middleware/user/changeInformationValidation");
+const handleErrors_1 = require("../../middleware/handleErrors");
+const changePasswordValidation_1 = require("../../middleware/user/changePasswordValidation");
+const getHistoryOrder_1 = require("../controller/user/getHistoryOrder");
+const getOrderDetail_1 = require("../controller/user/getOrderDetail");
+const getOrderDetailValidation_1 = require("../../middleware/user/getOrderDetailValidation");
+const router = (0, express_1.Router)();
+router.get("/", (req, res) => {
+    res.send("Router user is running");
+});
+router.post('/changePassword', changePasswordValidation_1.changePasswordValidation, handleErrors_1.handleErrors, changePassword_1.changePassword);
+router.post('/changeInformation', changeInformationValidation_1.changeInformationValidation, handleErrors_1.handleErrors, changeInformation_1.changeInformation);
+router.get('/getHistoryorder', getHistoryOrder_1.getHistoryOrder);
+router.get('/getOrderDetail', getOrderDetailValidation_1.getOrderDetailValidation, handleErrors_1.handleErrors, getOrderDetail_1.getOrderDetail);
+router.get('/getInforUser', getInforUser_1.getInforUser);
+exports.default = router;
